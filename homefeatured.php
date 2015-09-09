@@ -120,20 +120,20 @@ class HomeFeatured extends Module
 
 	public function _cacheProducts()
 	{
-		if (!isset(HomeFeatured::$cache_products))
+		$lang_id = (int)Context::getContext()->language->id;
+		if (!isset(HomeFeatured::$cache_products[$lang_id]))
 		{
 			$home_category = (int)Configuration::get('HOME_FEATURED_CAT');
 			$nb = (int)Configuration::get('HOME_FEATURED_NBR');
-			$lang_id = (int)Context::getContext()->language->id;
 			$lang_category = getLangCategories($lang_id);
 			$categories = [$home_category, $lang_category];
 			if (Configuration::get('HOME_FEATURED_RANDOMIZE'))
-				HomeFeatured::$cache_products = getProducts($categories, $lang_id, 1, ($nb ? $nb : 8), null, null, false, true, true, ($nb ? $nb : 8));
+				HomeFeatured::$cache_products[$lang_id] = getProducts($categories, $lang_id, 1, ($nb ? $nb : 8), null, null, false, true, true, ($nb ? $nb : 8));
 			else
-				HomeFeatured::$cache_products = getProducts($categories, $lang_id, 1, ($nb ? $nb : 8), 'position');
+				HomeFeatured::$cache_products[$lang_id] = getProducts($categories, $lang_id, 1, ($nb ? $nb : 8), 'position');
 		}
 
-		if (HomeFeatured::$cache_products === false || empty(HomeFeatured::$cache_products))
+		if (HomeFeatured::$cache_products[$lang_id] === false || empty(HomeFeatured::$cache_products[$lang_id]))
 			return false;
 	}
 
@@ -152,7 +152,7 @@ class HomeFeatured extends Module
 			$this->_cacheProducts();
 			$this->smarty->assign(
 				array(
-					'products' => HomeFeatured::$cache_products,
+					'products' => HomeFeatured::$cache_products[$params["cart"]->id_lang],
 					'add_prod_display' => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
 					'homeSize' => Image::getSize(ImageType::getFormatedName('home')),
 				)
