@@ -277,7 +277,7 @@ class HomeFeatured extends Module
 
 function getLangCategories($id_lang) 
 {
-    return ($id_lang == 2? 43:31);
+    return ($id_lang == 2? 31:43);
 }
 
 /**
